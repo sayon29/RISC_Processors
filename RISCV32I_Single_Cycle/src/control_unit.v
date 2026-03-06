@@ -91,7 +91,8 @@ module control_unit(
                     endcase     
                 end
                 7'b1101111:alu_op=2; //JAL
-                    
+                7'b0010111:alu_op=2; //AUIPC
+                7'b1100111:alu_op=2; //JALR
             endcase
         end
         
@@ -108,7 +109,7 @@ module control_unit(
     always@(instruction) begin
         opcode = instruction[6:0];
         case(opcode)
-            7'b0110111, 7'b1101111, 7'b0000011, 7'b0110011, 7'b0010011: reg_write_en = 1; //LUI, JAL, L_type, I_type, R_type
+            7'b0110111, 7'b1101111, 7'b0000011, 7'b0110011, 7'b0010011, 7'b1100111, 7'b0010111: reg_write_en = 1; //LUI, JAL, L_type, I_type, R_type, JALR, AUIPC
             default: reg_write_en = 0; //B_type, S_type
         endcase
     end
@@ -118,9 +119,9 @@ module control_unit(
         opcode = instruction[6:0];
         case(opcode)
            7'b0000011: write_back = 0; //L_type
-           7'b0110111, 7'b0110011, 7'b0010011: write_back = 1; //LUI, AUIPC, R_type, I_type
+           7'b0110111, 7'b0110011, 7'b0010011, 7'b0010111: write_back = 1; //LUI, R_type, I_type, AUIPC
            7'b1101111, 7'b1100111: write_back = 2; //JAL, JALR
-           default: write_back = 0;
+           default: write_back = 1;
         endcase
     end
     
@@ -130,6 +131,7 @@ module control_unit(
         case(opcode)
             7'b1100011:alu_srcA=0;  //B-type:BEW BNE BLT BGE BLTU BGEU
             7'b1101111:alu_srcA=0;  //J-type:JAL
+            7'b0010111:alu_srcA=0;  //AUIPC
             default:alu_srcA=1;
         endcase
     end

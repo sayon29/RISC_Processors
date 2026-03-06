@@ -38,8 +38,8 @@ module imm_generate(
                 imm_out = {instruction[31:12], 12'b0};
             end
 
-            // J-Type (JAL)
-            7'b1101111: begin
+            // J-Type (JAL, JALR)
+            7'b1101111, 7'b1100111: begin
                 imm_out = {{12{instruction[31]}},
                            instruction[31:12]};
             end
