@@ -40,12 +40,8 @@ module imm_generate(
 
             // J-Type (JAL)
             7'b1101111: begin
-                imm_out = {{11{instruction[31]}},
-                           instruction[31],
-                           instruction[19:12],
-                           instruction[20],
-                           instruction[30:21],
-                           1'b0};
+                imm_out = {{12{instruction[31]}},
+                           instruction[31:12]};
             end
 
             default: imm_out = 32'b0;

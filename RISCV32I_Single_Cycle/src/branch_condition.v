@@ -22,6 +22,9 @@ module branch_condition(
                 default: branch_cond_out = 1'b0;
             endcase
         end
+        else if(opcode == 7'b1101111) begin
+            branch_cond_out = 1; //JAL
+        end
         else begin
             branch_cond_out = 1'b0;
         end

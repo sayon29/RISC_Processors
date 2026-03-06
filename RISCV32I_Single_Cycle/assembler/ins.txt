@@ -1,7 +1,7 @@
 lw x3, 2(x2)
 sw x3, 2(x1)
-lw x4, 2(x1)
 addi r4, r4, 15
 bne x8, x4, -2
 add x12, x3, x4
 addi x12, x12, 0
+addi x31, x31, 0
