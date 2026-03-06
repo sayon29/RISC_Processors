@@ -30,6 +30,10 @@ module datapath(
     reg  [31:0] rs_data, rt_data;
     reg  [31:0] imm_out;
     reg  [31:0] write_back_data;
+    
+    initial begin
+       pc_reg <= 32'h0;
+    end
 
     always @(*) begin
         instruction   = instruction_fetch_out;
@@ -59,6 +63,7 @@ module datapath(
     wire [4:0] rs2_addr = instruction[24:20];
     wire [4:0] rd_addr  = instruction[11:7];
     wire [2:0] funct3   = instruction[14:12];
+    wire [6:0] opcode   = instruction[6:0];
 
     assign alu_src_a = (alu_src_A) ? rs_data : pc_plus_one;
     assign alu_src_b = (alu_src_B) ? rt_data : imm_out;
@@ -108,6 +113,7 @@ module datapath(
         .rs_data(rs_data), 
         .rt_data(rt_data), 
         .funct3(funct3),
+        .opcode(opcode),
         .branch_cond_out(branch_cond)
     );
 

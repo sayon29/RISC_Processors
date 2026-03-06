@@ -4,7 +4,7 @@ module instruction_fetch(
     output wire [31:0] instruction
 );
 
-    blk_mem_gen_1 instruction_rom_inst (
+    INS_MEM instruction_rom_inst (
     .clka(clk),
     .addra(pc_address),
     .douta(instruction)

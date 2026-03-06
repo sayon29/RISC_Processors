@@ -11,7 +11,7 @@ module risc_processor(
     wire [31:0] instruction;
     wire        reg_write_en, alu_srcA, alu_srcB, dest_reg_sel;
     wire [3:0]  alu_op, mem_write_en;
-    wire        write_back;
+    wire [1:0]  write_back;
     wire        alu_overflow;
     wire        mem_enable;
 

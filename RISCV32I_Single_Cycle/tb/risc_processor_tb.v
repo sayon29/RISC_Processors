@@ -26,7 +26,7 @@ module risc_processor_tb;
         rst = 1;
 
         // Apply reset
-        #15;
+        #10;
         rst = 0;
 
         // Run for enough cycles
@@ -51,7 +51,16 @@ module risc_processor_tb;
         $display("ALU_RESULT=%h | RD_DATA=%h",
                  alu_result,
                  rd_data);
-
+                 
+        $display("INSTRUCTION=%h",
+             uut.datapath_inst.instruction);
+             
+        $display("RS2 ADDR=%h",
+             uut.datapath_inst.rs2_addr);
+             
+        $display("R ADDR B=%h",
+             uut.datapath_inst.reg_file_inst.r_addr_b);
+             
         $display("--------------------------------------------------------------------");
     end
 

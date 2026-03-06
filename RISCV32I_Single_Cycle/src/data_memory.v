@@ -8,10 +8,10 @@ module data_memory (
   output wire [31:0] douta
 );
 
-  blk_mem_gen_0 ram_instance (
+  DATA_MEM ram_instance (
     .clka(clk),
-    .ena(enable),
-    .wea(wea), 
+    .enable(enable),
+    .w_en(wea), 
     .addra(addra),
     .dina(dina),
     .douta(douta)
