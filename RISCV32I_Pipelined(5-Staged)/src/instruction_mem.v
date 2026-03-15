@@ -10,7 +10,7 @@ end
 always @(posedge clk)begin
     if(flush==1 && freeze==0)begin out=32'b0; end               //For flush
     else if(flush==0 && freeze==1)begin  out <= out; end        //Fpr freeze
-    else if(flush==0 && freeze==1)out<=mem[addr];
+    else if(flush==0 && freeze==0)out<=mem[addr];
 end
                                                                                                          
 endmodule

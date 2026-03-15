@@ -14,8 +14,8 @@ module MEM_Stage(output reg_write_en_WB,
                  input [3:0]mem_write_en_MEM,
                  input [1:0]mux_writeback_con_MEM,
                  input  mem_enable_MEM,
-                 input  reg_write_en_MEM );
-
+                 input  reg_write_en_MEM ,
+                 input wire rst );
 
 //data_memory
 data_mem data_mem_inst(.out(memdata_WB),
@@ -55,6 +55,7 @@ register_1bit regwrite_enreg_MEM(.out(reg_write_en_WB),
 register_5bit rd_addrreg_MEM(.out(rd_addr_WB),
                           .in(rd_addr_MEM),
                           .clk(clk),
-                          .flush(0));
+                          .flush(0),
+                          .freeze(0));
 
 endmodule

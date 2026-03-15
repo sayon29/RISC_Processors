@@ -32,7 +32,10 @@ module ID_Stage(
     output wire [3:0]  alu_op_EX,
     output wire [3:0]  mem_write_en_EX,
     output wire [1:0]  mux_writeback_con_EX,
-    output wire        mem_enable_EX
+    output wire        mem_enable_EX,
+    
+    output wire [31:0] pc_plus_off,
+    output wire        branch_taken
 );
 
     wire [31:0] imm_out_net;
@@ -41,6 +44,15 @@ module ID_Stage(
     imm_generate imm_gen_inst (
         .instruction(instruction_ID),
         .imm_out(imm_out_net)
+    );
+    
+    //Branch Decision Module
+    branch_decision branch_decision_inst (
+        .rs1_data(rs_data_ID),
+        .rs2_data(rt_data_ID),
+        .instruction(instruction_ID),
+        .pc_plus_off(pc_plus_off),
+        .branch_taken(branch_taken)
     );
 
     // Datapath pipeline registers
@@ -80,7 +92,8 @@ module ID_Stage(
         .out(rd_addr_EX),
         .in(rd_addr_ID),
         .clk(clk),
-        .flush(0)
+        .flush(0),
+        .freeze(0)
     );
 
     // =============================
@@ -134,6 +147,7 @@ module ID_Stage(
         .in(mem_enable_ID),
         .clk(clk),
         .flush(0)
+        
     );
 
 endmodule

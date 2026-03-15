@@ -9,18 +9,12 @@ module datapath(
     input wire  [1:0]    mux_writeback_con, 
     input wire           mem_enable,
     
-    output wire  [31:0]   write_back_data_WB,
+    output wire  [31:0]  write_back_data_WB,
     output wire          alu_overflow,
     output wire [31:0]   instruction_ID
 );
 
     wire [31:0] pc_ID;
-    
-    IF_Stage IF_Stage_inst(
-        .clk(clk),
-        .pc_ID(pc_ID),
-        .instruction_ID(instruction_ID)
-    );
     
     wire [4:0] rs1_addr_ID = instruction_ID[19:15];
     wire [4:0] rs2_addr_ID = instruction_ID[24:20];
@@ -60,7 +54,18 @@ module datapath(
     wire [1:0]  mux_writeback_con_WB;
     wire        reg_write_en_WB;
 
+    wire [31:0] pc_plus_off;
+    wire        branch_taken;
 
+    IF_Stage IF_Stage_inst(
+        .clk(clk),
+        .rst(rst),
+        .pc_ID(pc_ID),
+        .instruction_ID(instruction_ID),
+        .branch_taken(branch_taken),
+        .pc_plus_off(pc_plus_off)
+    );
+    
     ID_Stage ID_Stage_inst (
         .clk(clk),
         .rst(rst),
@@ -95,7 +100,11 @@ module datapath(
         .alu_op_EX(alu_op_EX),
         .mem_write_en_EX(mem_write_en_EX),
         .mux_writeback_con_EX(mux_writeback_con_EX),
-        .mem_enable_EX(mem_enable_EX)
+        .mem_enable_EX(mem_enable_EX),
+        
+        //Datapath and Control Output to IF Stage for Branch Taken
+        .pc_plus_off(pc_plus_off),
+        .branch_taken(branch_taken)
     );
     
     reg_bank reg_file_inst(

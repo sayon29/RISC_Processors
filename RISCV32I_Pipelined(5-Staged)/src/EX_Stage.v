@@ -41,10 +41,10 @@ module EX_Stage(
     wire        alu_carry; // Optional: not usually forwarded to MEM
 
     // Mux A logic: Select between Register Data and PC
-    assign muxA_out = (muxA_con_EX) ? pc_EX : rs_data_EX;
+    assign muxA_out = (muxA_con_EX) ? rs_data_EX : pc_EX;
 
     // Mux B logic: Select between Register Data and Immediate
-    assign muxB_out = (muxB_con_EX) ? imm_EX : rt_data_EX;
+    assign muxB_out = (muxB_con_EX) ? rt_data_EX : imm_EX;
 
     // ALU Instantiation
     alu alu_inst (
@@ -72,7 +72,7 @@ module EX_Stage(
     );
 
     register_5bit rd_addr_reg (
-        .out(rd_addr_MEM), .in(rd_addr_EX), .clk(clk), .flush(0)
+        .out(rd_addr_MEM), .in(rd_addr_EX), .clk(clk), .flush(0), .freeze(0)
     );
 
     register_1bit reg_write_reg (

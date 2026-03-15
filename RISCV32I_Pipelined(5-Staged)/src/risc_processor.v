@@ -26,11 +26,9 @@ module risc_processor(
         .mem_write_en(mem_write_en),
         .mux_writeback_con(mux_writeback_con),
         .instruction_ID(instruction), 
-        .alu_result(alu_result),
         .alu_overflow(alu_overflow),
         .mem_enable(mem_enable),
-        .write_back_data_WB(rd_data),
-        .pc_reg(npc)
+        .write_back_data_WB(rd_data)
         
     );
 
