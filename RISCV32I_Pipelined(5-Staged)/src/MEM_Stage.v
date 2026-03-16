@@ -30,32 +30,37 @@ register_32bit pcreg_MEM(.out(pc_WB),
                          .in(pc_MEM),
                          .clk(clk),
                          .flush(0),
-                         .freeze(0));
+                         .freeze(0),
+                         .rst(rst));
 
 //ALU Result                         
 register_32bit alu_resreg_MEM(.out(alu_res_WB),
                               .in(alu_res_MEM),
                               .clk(clk),
                               .flush(0),
-                              .freeze(0));
+                              .freeze(0),
+                              .rst(rst));
                               
 //MUX writeback control signal register                    
 register_2bit mux_writeback_conreg_MEM(.out(mux_writeback_con_WB),
                                        .in(mux_writeback_con_MEM),
                                        .clk(clk),
-                                       .flush(0));
+                                       .flush(0),
+                                       .rst(rst));
 
 //Reg writeback control signal                                 
 register_1bit regwrite_enreg_MEM(.out(reg_write_en_WB),
                                  .in(reg_write_en_MEM),
                                  .clk(clk),
-                                 .flush(0));
+                                 .flush(0),
+                                 .rst(rst));
 
 //Rd addr register for WB
 register_5bit rd_addrreg_MEM(.out(rd_addr_WB),
                           .in(rd_addr_MEM),
                           .clk(clk),
                           .flush(0),
-                          .freeze(0));
+                          .freeze(0),
+                          .rst(rst));
 
 endmodule

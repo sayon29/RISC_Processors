@@ -24,12 +24,10 @@ module imm_generate(
 
             // B-Type (BEQ, BNE, etc)
             7'b1100011: begin
-                imm_out = {{19{instruction[31]}},
+                imm_out = {{20{instruction[31]}},
                            instruction[31],
-                           instruction[7],
                            instruction[30:25],
-                           instruction[11:8],
-                           1'b0};
+                           instruction[11:7]};
             end
 
             // U-Type (LUI, AUIPC)

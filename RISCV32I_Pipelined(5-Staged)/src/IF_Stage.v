@@ -18,8 +18,9 @@ module IF_Stage(
         .out(pc_net),
         .in(new_pc),
         .clk(clk),
-        .flush(rst),
-        .freeze(0)
+        .flush(0),
+        .freeze(0),
+        .rst(rst)
     );
     
     register_32bit pc_IF(
@@ -27,7 +28,8 @@ module IF_Stage(
         .in(pc_plus_one),
         .clk(clk),
         .flush(branch_taken),
-        .freeze(0)
+        .freeze(0),
+        .rst(rst)
     );
     
     instruction_mem instruction_mem_inst (
@@ -35,6 +37,7 @@ module IF_Stage(
         .addr(pc_net),
         .out(instruction_ID),
         .flush(branch_taken),
-        .freeze(0)
+        .freeze(0),
+        .rst(rst)
     );
 endmodule

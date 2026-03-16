@@ -40,6 +40,8 @@ module EX_Stage(
     wire [31:0] alu_result_net;
     wire        alu_carry; // Optional: not usually forwarded to MEM
 
+    //Add data forwarding mux here
+    
     // Mux A logic: Select between Register Data and PC
     assign muxA_out = (muxA_con_EX) ? rs_data_EX : pc_EX;
 
@@ -60,35 +62,35 @@ module EX_Stage(
     // These registers transition the signals from the EX stage to the MEM stage
     
     register_32bit alu_res_reg (
-        .out(alu_res_MEM), .in(alu_result_net), .clk(clk), .flush(0), .freeze(0)
+        .out(alu_res_MEM), .in(alu_result_net), .clk(clk), .flush(0), .freeze(0), .rst(rst)
     );
 
     register_32bit rt_data_pass_reg (
-        .out(rt_data_MEM), .in(rt_data_EX), .clk(clk), .flush(0), .freeze(0)
+        .out(rt_data_MEM), .in(rt_data_EX), .clk(clk), .flush(0), .freeze(0), .rst(rst)
     );
 
     register_32bit pc_pass_reg (
-        .out(pc_MEM), .in(pc_EX), .clk(clk), .flush(0), .freeze(0)
+        .out(pc_MEM), .in(pc_EX), .clk(clk), .flush(0), .freeze(0), .rst(rst)
     );
 
     register_5bit rd_addr_reg (
-        .out(rd_addr_MEM), .in(rd_addr_EX), .clk(clk), .flush(0), .freeze(0)
+        .out(rd_addr_MEM), .in(rd_addr_EX), .clk(clk), .flush(0), .freeze(0), .rst(rst)
     );
 
     register_1bit reg_write_reg (
-        .out(reg_write_en_MEM), .in(reg_write_en_EX), .clk(clk), .flush(0)
+        .out(reg_write_en_MEM), .in(reg_write_en_EX), .clk(clk), .flush(0), .rst(rst)
     );
 
     register_4bit mem_write_reg (
-        .out(mem_write_en_MEM), .in(mem_write_en_EX), .clk(clk), .flush(0)
+        .out(mem_write_en_MEM), .in(mem_write_en_EX), .clk(clk), .flush(0), .rst(rst)
     );
 
     register_2bit mux_wb_reg (
-        .out(mux_writeback_con_MEM), .in(mux_writeback_con_EX), .clk(clk), .flush(0)
+        .out(mux_writeback_con_MEM), .in(mux_writeback_con_EX), .clk(clk), .flush(0), .rst(rst)
     );
 
     register_1bit mem_en_reg (
-        .out(mem_enable_MEM), .in(mem_enable_EX), .clk(clk), .flush(0)
+        .out(mem_enable_MEM), .in(mem_enable_EX), .clk(clk), .flush(0), .rst(rst)
     );
 
 endmodule

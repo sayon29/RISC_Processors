@@ -112,12 +112,25 @@ def assemble_line(line, pc, labels):
         if target in labels:
             imm = labels[target] - pc - 1
         else:
-            imm = int(target)
+            imm = int(target) - 1
 
         f3 = {'beq':0,'bne':1,'blt':4,'bge':5,'bltu':6,'bgeu':7}[instr]
 
-        return ((imm & 0xFFF)<<20) | (rs2<<20) | (rs1<<15) | (f3<<12) | (0<<7) | 0x63
+        imm &= 0xFFF  # keep 12 bits
 
+        imm11  = (imm >> 11) & 0x1
+        imm10_5 = (imm >> 5) & 0x3F
+        imm4_0  = imm & 0x1F
+
+        return (
+            (imm11 << 31) |
+            (imm10_5 << 25) |
+            (rs2 << 20) |
+            (rs1 << 15) |
+            (f3 << 12) |
+            (imm4_0 << 7) |
+            0x63
+        )
 
     # ---------- JAL ----------
     if instr == "jal":

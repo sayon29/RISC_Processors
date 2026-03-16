@@ -23,7 +23,7 @@ module datapath(
     wire [31:0] rs_data_ID;
     wire [31:0] rt_data_ID;
     
-   wire [31:0] pc_EX;
+    wire [31:0] pc_EX;
     wire [31:0] rs_data_EX;
     wire [31:0] rt_data_EX;
     wire [31:0] imm_EX;
@@ -56,13 +56,22 @@ module datapath(
 
     wire [31:0] pc_plus_off;
     wire        branch_taken;
-
+    
+    wire [1:0] fwd_con3_EX;
+    wire [1:0] fwd_con4_EX;
+    
+    wire freeze_PC;
+    wire freeze_IF;
+    wire flush_IF;
+    
     IF_Stage IF_Stage_inst(
         .clk(clk),
         .rst(rst),
         .pc_ID(pc_ID),
         .instruction_ID(instruction_ID),
-        .branch_taken(branch_taken),
+        .freeze_PC(freeze_PC),
+        .freeze_IF(freeze_IF),
+        .flush_IF(flush_IF),
         .pc_plus_off(pc_plus_off)
     );
     
@@ -104,7 +113,18 @@ module datapath(
         
         //Datapath and Control Output to IF Stage for Branch Taken
         .pc_plus_off(pc_plus_off),
-        .branch_taken(branch_taken)
+        .branch_taken(branch_taken),
+        
+        .rd_addr_MEM(rd_addr_MEM),
+        .rd_addr_WB(rd_addr_WB),
+        .reg_write_en_MEM(reg_write_en_MEM),
+        .reg_write_en_WB(reg_write_en_WB),
+        .fwd_con3_EX(fwd_con3_EX),
+        .fwd_con4_EX(fwd_con4_EX),
+        .write_back_data_WB(write_back_data_WB),
+        .freeze_PC(freeze_PC),
+        .freeze_IF(freeze_IF),
+        .flush_IF(flush_IF)
     );
     
     reg_bank reg_file_inst(
@@ -150,8 +170,11 @@ module datapath(
         .reg_write_en_MEM(reg_write_en_MEM),
         .mem_write_en_MEM(mem_write_en_MEM),
         .mux_writeback_con_MEM(mux_writeback_con_MEM),
-        .mem_enable_MEM(mem_enable_MEM)
+        .mem_enable_MEM(mem_enable_MEM),
         
+        .fwd_con3(fwd_con3_EX),
+        .fwd_con4(fwd_con4_EX),
+        .write_back_data_WB(write_back_data_WB)
     );
     
     // MEM Stage Instantiation

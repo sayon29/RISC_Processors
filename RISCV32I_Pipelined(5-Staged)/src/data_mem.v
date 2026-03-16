@@ -21,8 +21,8 @@ always @(posedge clk)begin
         if(mem_write_en==4'b0001) mem [addr]=in[7:0]; //SB
         else if(mem_write_en==4'b0011) mem [addr]=in[15:0]; //SH
         else if(mem_write_en==4'b1111) mem [addr]=in[31:0]; //SW
+        out=mem[addr];   //read
     end
-    out=mem[addr];   //read
 end
 
 endmodule
