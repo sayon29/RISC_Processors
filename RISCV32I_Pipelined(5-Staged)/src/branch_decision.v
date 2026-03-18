@@ -4,40 +4,57 @@ module branch_decision( input [31:0] rs1_data,
                         input [31:0] rs2_data,
                         input [31:0] instruction,
                         input [31:0] immediate,
-                        input [31:0] pc,
-                        output wire [31:0] pc_plus_off,
-                        output reg branch_taken);
+                        input pred_out,
+                        output reg real_pc_con,
+                        output reg wrong_pred);
 
 wire [6:0] opcode= instruction[6:0];
 wire [2:0] funct3= instruction[14:12];
 
-assign pc_plus_off=pc+immediate;
 
 always @(*) begin
     if(opcode == 7'b1100011) begin
-    case(funct3)
-        
-        3'b000: branch_taken = (rs1_data == rs2_data);        // BEQ
-        3'b001: branch_taken = (rs1_data != rs2_data);        // BNE
-        3'b100: branch_taken = ($signed(rs1_data) < $signed(rs2_data));          // BLT
-                                                   
-        3'b101: branch_taken = ($signed(rs1_data) >=  $signed(rs2_data));          // BGE
-                                                  
-        3'b110: branch_taken = (rs1_data < rs2_data);         // BLTU
-        3'b111: branch_taken = (rs1_data >= rs2_data);        // BGEU
-            
-        default: branch_taken = 1'b0;
-    endcase
+        case(funct3)          
+            3'b000:begin 
+                        real_pc_con = (rs1_data == rs2_data);        // BEQ
+                        wrong_pred =(real_pc_con!=pred_out);
+                   end
+            3'b001:begin
+                        real_pc_con = (rs1_data != rs2_data);        // BNE
+                        wrong_pred =(real_pc_con!=pred_out);
+                   end
+            3'b100:begin 
+                        real_pc_con = ($signed(rs1_data) < $signed(rs2_data));          // BLT
+                        wrong_pred =(real_pc_con!=pred_out);
+                   end                                    
+            3'b101:begin 
+                        real_pc_con = ($signed(rs1_data) >=  $signed(rs2_data));          // BGE
+                        wrong_pred =(real_pc_con!=pred_out);
+                   end                                   
+            3'b110:begin 
+                        real_pc_con = (rs1_data < rs2_data);         // BLTU
+                        wrong_pred =(real_pc_con!=pred_out);
+                   end     
+            3'b111:begin 
+                        real_pc_con = (rs1_data >= rs2_data);        // BGEU
+                        wrong_pred =(real_pc_con!=pred_out);
+                   end
+                
+            default:begin 
+                        real_pc_con = 1'b0;
+                        wrong_pred =(real_pc_con!=pred_out);
+                    end
+        endcase  
     end
     else if(opcode == 7'b1101111 || opcode == 7'b1100111) begin
-        branch_taken = 1; //JAL, JALR
+            real_pc_con = 1; //JAL, JALR
+            wrong_pred =(real_pc_con!=pred_out);
     end
     else begin
-        branch_taken = 1'b0;
-    end
+            real_pc_con = 1'b0;
+            wrong_pred =(real_pc_con!=pred_out);
+    end   
+    
 end
-
-
-                         
-                      
+                                               
 endmodule

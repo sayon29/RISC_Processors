@@ -8,6 +8,7 @@ module EX_Stage(
     input wire [31:0] rt_data_EX,
     input wire [31:0] imm_EX,
     input wire [4:0]  rd_addr_EX,
+    input wire [31:0] instruction_EX,
 
     // Control signals from ID/EX registers
     input wire        reg_write_en_EX,
@@ -30,6 +31,15 @@ module EX_Stage(
     output wire [1:0]  mux_writeback_con_MEM,
     output wire        mem_enable_MEM,
     
+    input  wire [1:0]  fwd_con3,
+    input  wire [1:0]  fwd_con4,
+    input  wire [31:0] write_back_data_WB,
+    
+    output wire        wrong_pred,
+    input  wire        pred_out_EX,
+    input  wire [31:0] pc_plus_off_EX,
+    output wire [31:0] real_pc,
+    
     // Status signals
     output wire        alu_overflow
 );
@@ -39,15 +49,37 @@ module EX_Stage(
     wire [31:0] muxB_out;
     wire [31:0] alu_result_net;
     wire        alu_carry; // Optional: not usually forwarded to MEM
-
-    //Add data forwarding mux here
+    wire [31:0] fwd_mux_data3;
+    wire [31:0] fwd_mux_data4;
+    
+    wire        real_pc_con;
+    
+    assign fwd_mux_data3  =(fwd_con3 == 2'b00) ? rs_data_EX :
+                           (fwd_con3 == 2'b01) ? alu_res_MEM :
+                           (fwd_con3 == 2'b10) ? write_back_data_WB : 32'b0 ;
+    
+    assign fwd_mux_data4  =(fwd_con4 == 2'b00) ? rt_data_EX :
+                           (fwd_con4 == 2'b01) ? alu_res_MEM :
+                           (fwd_con4 == 2'b10) ? write_back_data_WB : 32'b0 ;
     
     // Mux A logic: Select between Register Data and PC
-    assign muxA_out = (muxA_con_EX) ? rs_data_EX : pc_EX;
+    assign muxA_out = (muxA_con_EX) ? fwd_mux_data3 : pc_EX;
 
     // Mux B logic: Select between Register Data and Immediate
-    assign muxB_out = (muxB_con_EX) ? rt_data_EX : imm_EX;
+    assign muxB_out = (muxB_con_EX) ? fwd_mux_data4 : imm_EX;
 
+     branch_decision branch_decision_inst (
+        .rs1_data(fwd_mux_data3),
+        .rs2_data(fwd_mux_data4),
+        .immediate(imm_EX),
+        .instruction(instruction_EX),
+        .pred_out(pred_out_EX),
+        .wrong_pred(wrong_pred),
+        .real_pc_con(real_pc_con)
+    );
+    
+    assign real_pc = (real_pc_con)? pc_plus_off_EX : pc_EX;
+    
     // ALU Instantiation
     alu alu_inst (
         .in_1(muxA_out), 

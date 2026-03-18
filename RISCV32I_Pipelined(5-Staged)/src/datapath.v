@@ -28,6 +28,7 @@ module datapath(
     wire [31:0] rt_data_EX;
     wire [31:0] imm_EX;
     wire [4:0]  rd_addr_EX;
+    wire [31:0] instruction_EX;
 
     wire        reg_write_en_EX;
     wire        muxA_con_EX;
@@ -56,6 +57,8 @@ module datapath(
 
     wire [31:0] pc_plus_off;
     wire        branch_taken;
+    wire        wrong_pred;
+    wire [31:0] real_pc;
     
     wire [1:0] fwd_con3_EX;
     wire [1:0] fwd_con4_EX;
@@ -63,6 +66,10 @@ module datapath(
     wire freeze_PC;
     wire freeze_IF;
     wire flush_IF;
+    
+    wire [31:0] pc_plus_off_EX;
+    
+    wire pred_out_EX;
     
     IF_Stage IF_Stage_inst(
         .clk(clk),
@@ -72,7 +79,10 @@ module datapath(
         .freeze_PC(freeze_PC),
         .freeze_IF(freeze_IF),
         .flush_IF(flush_IF),
-        .pc_plus_off(pc_plus_off)
+        .pc_plus_off(pc_plus_off),
+        .branch_taken(branch_taken),
+        .wrong_pred(wrong_pred),
+        .real_pc(real_pc)
     );
     
     ID_Stage ID_Stage_inst (
@@ -101,6 +111,7 @@ module datapath(
         .rt_data_EX(rt_data_EX),
         .imm_EX(imm_EX),
         .rd_addr_EX(rd_addr_EX),
+        .instruction_EX(instruction_EX),
 
         // Control signals forwarded to EX stage (New wires)
         .reg_write_en_EX(reg_write_en_EX),
@@ -113,6 +124,7 @@ module datapath(
         
         //Datapath and Control Output to IF Stage for Branch Taken
         .pc_plus_off(pc_plus_off),
+        .pc_plus_off_EX(pc_plus_off_EX),
         .branch_taken(branch_taken),
         
         .rd_addr_MEM(rd_addr_MEM),
@@ -124,7 +136,10 @@ module datapath(
         .write_back_data_WB(write_back_data_WB),
         .freeze_PC(freeze_PC),
         .freeze_IF(freeze_IF),
-        .flush_IF(flush_IF)
+        .flush_IF(flush_IF),
+        
+        .pred_out_EX(pred_out_EX),
+        .wrong_pred(wrong_pred)
     );
     
     reg_bank reg_file_inst(
@@ -149,6 +164,7 @@ module datapath(
         .rt_data_EX(rt_data_EX),
         .imm_EX(imm_EX),
         .rd_addr_EX(rd_addr_EX),
+        .instruction_EX(instruction_EX),
 
         .alu_overflow(alu_overflow),
         // Control signals from ID/EX pipeline registers
@@ -174,7 +190,12 @@ module datapath(
         
         .fwd_con3(fwd_con3_EX),
         .fwd_con4(fwd_con4_EX),
-        .write_back_data_WB(write_back_data_WB)
+        .write_back_data_WB(write_back_data_WB),
+        
+        .pred_out_EX(pred_out_EX),
+        .pc_plus_off_EX(pc_plus_off_EX),
+        .wrong_pred(wrong_pred),
+        .real_pc(real_pc)
     );
     
     // MEM Stage Instantiation
