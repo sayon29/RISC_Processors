@@ -71,7 +71,6 @@ module EX_Stage(
      branch_decision branch_decision_inst (
         .rs1_data(fwd_mux_data3),
         .rs2_data(fwd_mux_data4),
-        .immediate(imm_EX),
         .instruction(instruction_EX),
         .pred_out(pred_out_EX),
         .wrong_pred(wrong_pred),

@@ -3,7 +3,6 @@
 module branch_decision( input [31:0] rs1_data,
                         input [31:0] rs2_data,
                         input [31:0] instruction,
-                        input [31:0] immediate,
                         input pred_out,
                         output reg real_pc_con,
                         output reg wrong_pred);
